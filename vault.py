@@ -165,16 +165,20 @@ if not is_unlocked:
             ).upper().strip()
 
         with c2:
-            if st.button("Unlock", width='content'):
-                if user_input in SECRET_CODES:
-                    if user_input not in st.session_state.found_codes_set:
-                        st.session_state.found_codes_set.add(user_input)
-                        # Check if this was the final character
-                        if len(st.session_state.found_codes_set) == 5:
-                            st.balloons()
-                        st.rerun()
-                elif user_input:
-                    st.error("Invalid")
+            # This button now responds to the keyboard 'Enter' key!
+            submit_button = st.form_submit_button("Unlock", use_container_width=True)
+
+        if st.button("Unlock", width='content'):
+            if user_input in SECRET_CODES:
+                if user_input not in st.session_state.found_codes_set:
+                    st.session_state.found_codes_set.add(user_input)
+                    # Check if this was the final character
+                    if len(st.session_state.found_codes_set) == 5:
+                        st.balloons()
+                    st.rerun()
+            elif user_input:
+                st.error("Invalid code")
+
 else:
     # st.write("---")
     st.success("🔓 **VAULT ACCESS GRANTED: SYSTEM DECRYPTED** ✨")
