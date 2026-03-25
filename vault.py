@@ -240,6 +240,8 @@ if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
             mime="image/png"
         )
 
+        st.info("Your photo is not stored on the server.")
+
 # ---------------------------------------------------------
 # 📂 SECTION A: INTERACTIVE MISSION BRIEFING
 # ---------------------------------------------------------
