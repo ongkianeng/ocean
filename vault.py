@@ -81,7 +81,7 @@ TARGET_PRINT_SIZE = 2250
 # Adjust this value to make the white mask wider or narrower.
 BORDER_THICKNESS = 50
 
-def apply_fixed_size_frame(photo_file):
+def apply_memento(photo_file):
     """Explicitly centers photo and frame using X/Y coordinate math."""
     
     # --- Step A: Setup Canvas ---
@@ -189,58 +189,70 @@ else:
 
 if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
     st.divider()
-    st.header("📸 Ocean Angel Certified!")
-    if is_unlocked and not st.session_state.celebrated:
-        # 1. Trigger the balloons! 🎈
+    st.header("📸 You are certified to be an Ocean Angel!")
+
+    # 1. One-time Celebration Logic
+    if is_unlocked and not st.session_state.get('celebrated', False):
         st.balloons()
-        
-        # 2. Add a small pause so they see the balloons before the UI changes
         time.sleep(0.5) 
-        
-        # 3. SET THE FLAG TO TRUE. The app will never run this block again.
         st.session_state.celebrated = True
-        
-        # 4. Rerun to ensure "Codes Unlocked" metric switches to OCEAN and input hides
         st.rerun()
         
     st.success("🎉 Ocean Saved!")
-    with st.expander("💡How will you use AI to save our oceans?", expanded=True):
-        st.write("View https://www.youtube.com/shorts/ieiEaV-q3Ck")
-        
-    # Requirement: Fixed size camera input (Pillow handles standardization logic below)
-    photo_file = st.camera_input("Smile for the AI! (Wait 3 seconds for AI check) Position yourself at the centre of the camera.")
+    with st.expander("💡 How will you use AI to save our oceans?", expanded=True):
+        st.write("View: https://www.youtube.com/shorts/ieiEaV-q3Ck")
+    
+    # Initialize session state for photo management
+    if "photo_taken" not in st.session_state:
+        st.session_state.photo_taken = False
 
-    if photo_file:
-        with st.spinner("AI checking gesture... superimposing certified fixed-size frame..."):
-            final_img = apply_fixed_size_frame(photo_file)
-            st.session_state.memento_generated = True
-        
-        # Checkbox to switch if the camera is acting up
+    # 2. STATE A: Capture Mode
+    if not st.session_state.photo_taken:
+        # Toggle for fallback
         use_upload = st.toggle("Camera not working? Use File Upload instead.")
-
+        
         if use_upload:
-            photo_file = st.file_uploader("Upload your graduation selfie", type=['jpg', 'png', 'jpeg'])
+            photo_input = st.file_uploader("Upload your selfie", type=['jpg', 'png', 'jpeg'])
         else:
-            photo_file = st.camera_input("Smile! Reef Mission Complete.")
-            
-        st.subheader("📸 Ocean of Possibilities: AI Learning Journey @ Temasek Polytechnic")
-        
-        # Display the result to ensure user likes it
-        st.image(final_img, caption="Your AI Learning Journey Photo Memento", width='content')
-        
-        # Download requires conversion back to bytes
-        import io
-        img_bytes = io.BytesIO()
-        final_img.save(img_bytes, format='PNG', dpi=(300, 300))
-        
-        st.download_button(
-            label="💾 Download My Photo Memento",
-            data=img_bytes.getvalue(),
-            file_name="tp_aai_learning_journey.png",
-            mime="image/png"
-        )
+            photo_input = st.camera_input("Smile for the AI! Position yourself at the center.")
 
-        st.info("Your photo is not stored on the server.")
+        if photo_input:
+            st.session_state.captured_img_data = photo_input.getvalue()
+            st.session_state.photo_taken = True
+            st.rerun()
+
+    # 3. STATE B: Result Mode (Camera is hidden)
+    else:
+        with st.spinner("AI checking gesture... superimposing certified frame..."):
+            # Process the image using the standardized centering logic
+            final_img = apply_memento(io.BytesIO(st.session_state.captured_img_data))
+            
+            st.subheader("📸 Ocean of Possibilities: Learning Journey @ Applied AI")
+            st.image(final_img, use_container_width=True, caption="Your Photo Memento")
+            
+            # Action Buttons
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Prepare high-res download (300 DPI for 7.5" print)
+                img_bytes = io.BytesIO()
+                final_img.save(img_bytes, format='PNG', dpi=(300, 300))
+                
+                st.download_button(
+                    label="💾 Download Memento",
+                    data=img_bytes.getvalue(),
+                    file_name="tp_aai_memento.png",
+                    mime="image/png",
+                    use_container_width=True
+                )
+            
+            with col2:
+                # Button to reset state and show the camera again
+                if st.button("🔄 Retake Photo", use_container_width=True):
+                    st.session_state.photo_taken = False
+                    st.rerun()
+
+        st.info("Note: Your photo is processed locally and is not stored on our servers.")
 
 # ---------------------------------------------------------
 # 📂 SECTION A: INTERACTIVE MISSION BRIEFING
