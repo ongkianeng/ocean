@@ -189,7 +189,7 @@ else:
 
 if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
     st.divider()
-    st.header("📸 Surprise unlocked!")
+    st.header("🎉 Congratulations! Surprise unlocked!")
 
     # 1. One-time Celebration Logic
     if is_unlocked and not st.session_state.get('celebrated', False):
@@ -198,7 +198,7 @@ if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
         st.session_state.celebrated = True
         st.rerun()
         
-    st.success("🎉 Congratulations!")
+    # st.success("🎉 Congratulations!")
     with st.expander("💡 How will you use AI to save our oceans?", expanded=True):
         st.write("View: https://www.youtube.com/shorts/ieiEaV-q3Ck")
     
@@ -214,7 +214,7 @@ if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
         if use_upload:
             photo_input = st.file_uploader("Upload your selfie", type=['jpg', 'png', 'jpeg'])
         else:
-            photo_input = st.camera_input("Smile for the AI! Position yourself at the center.")
+            photo_input = st.camera_input("📸 Smile for the AI! Position yourself at the center.")
 
         if photo_input:
             st.session_state.captured_img_data = photo_input.getvalue()
