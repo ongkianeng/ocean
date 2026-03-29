@@ -58,7 +58,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. Logic & State ---
+# --- 2. Logic & State ---
 if "found_codes_set" not in st.session_state:
     st.session_state.found_codes_set = set()
 if "active_tab" not in st.session_state:
@@ -67,7 +67,8 @@ if "celebrated" not in st.session_state:
     st.session_state.celebrated = False
 
 # --- Session State Initialization ---
-SECRET_CODES = {"O", "C", "E", "A", "N"}
+SECRET_CODE = "OCEAN"
+SECRET_CODES = set(SECRET_CODE.split())
 MEMENTO_TARGET_COUNT = len(SECRET_CODES)
 
 if "found_codes_set" not in st.session_state:
@@ -82,7 +83,7 @@ TARGET_PRINT_SIZE = 2250
 BORDER_THICKNESS = 50
 
 def apply_memento(photo_file):
-    """Explicitly centers photo and frame using X/Y coordinate math."""
+    """Center photo and frame using X/Y coordinate math."""
     
     # --- Step A: Setup Canvas ---
     # Create the white square 'mat'
@@ -102,10 +103,10 @@ def apply_memento(photo_file):
     canvas.paste(photo_square, (BORDER_THICKNESS, BORDER_THICKNESS), photo_square)
     
     try:
-        # --- Step C: Center the Frame (The X/Y Math) ---
+        # --- Center the Frame (The X/Y Math) ---
         frame_raw = Image.open("frame.png").convert("RGBA")
         
-        # Resize frame to fit the 2250px square while keeping its 914:1024 ratio
+        # Resize frame to fit the 2250px square
         # 'ImageOps.contain' ensures the whole frame is visible without stretching
         frame_resized = ImageOps.contain(frame_raw, (TARGET_PRINT_SIZE, TARGET_PRINT_SIZE))
         
@@ -127,7 +128,7 @@ def apply_memento(photo_file):
 st.title("🌊 Ocean Odyssey Vault")
 st.write("Complete missions, gather 5 code letters, and unlock the vault! 🔓")
 
-# --- 2. Vault Status ---
+# --- 3. Vault Status ---
 current_count = len(st.session_state.found_codes_set)
 
 current_count = len(st.session_state.found_codes_set)
@@ -140,9 +141,9 @@ with v_col1:
     st.metric(label="Vault Status", value=f"{current_count}/5")
 
 with v_col2:
-    # Logic: If all 5 are found, unscramble to "OCEAN", otherwise show jumbled letters
+    # Logic: If all 5 are found, unscramble, otherwise show jumbled letters
     if is_unlocked:
-        codes_display = "OCEAN"
+        codes_display = SECRET_CODE
     else:
         found_sorted = sorted(list(st.session_state.found_codes_set))
         codes_display = ", ".join(found_sorted) if found_sorted else "---"
@@ -194,7 +195,7 @@ if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
     # 1. One-time Celebration Logic
     if is_unlocked and not st.session_state.get('celebrated', False):
         st.balloons()
-        time.sleep(1) 
+        time.sleep(2) 
         st.session_state.celebrated = True
         st.rerun()
         
