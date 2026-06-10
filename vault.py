@@ -67,10 +67,13 @@ if "celebrated" not in st.session_state:
     st.session_state.celebrated = False
 
 # --- Session State Initialization ---
-SECRET_CODE = "OCEAN"
-SECRET_CODES = set(SECRET_CODE)
+# SECRET_CODE = "OCEAN"
+# SECRET_CODES = set(SECRET_CODE)
 # SECRET_CODES = {"O", "C", "E", "A", "N"}
+SECRET_CODES = {"T", "P", "A", "A", "I"}
 MEMENTO_TARGET_COUNT = len(SECRET_CODES)
+# PHOTO_CAPTION = "📸 Ocean of Possibilities: Learning Journey @ Applied AI"
+PHOTO_CAPTION = "📸 Ocean of Possibilities: Hong Kong University SPACE Study Tour @ Temasek Polytechnic Applied AI"
 
 if "found_codes_set" not in st.session_state:
     st.session_state.found_codes_set = set()
@@ -229,7 +232,7 @@ if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
             # Process the image using the standardized centering logic
             final_img = apply_memento(io.BytesIO(st.session_state.captured_img_data))
             
-            st.subheader("📸 Ocean of Possibilities: Learning Journey @ Applied AI")
+            st.subheader(PHOTO_CAPTION)
             st.image(final_img, use_container_width=True, caption="Your Photo Memento")
             
             # Action Buttons
