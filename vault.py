@@ -59,24 +59,29 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- 2. Logic & State ---
-if "found_codes_set" not in st.session_state:
-    st.session_state.found_codes_set = set()
+if "found_codes" not in st.session_state:
+    st.session_state.found_codes = []
+
+if "unlocked_missions" not in st.session_state:
+    st.session_state.unlocked_missions = set()
+
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "🐠"
 if "celebrated" not in st.session_state:
     st.session_state.celebrated = False
 
 # --- Session State Initialization ---
-# SECRET_CODE = "OCEAN"
-# SECRET_CODES = set(SECRET_CODE)
-# SECRET_CODES = {"O", "C", "E", "A", "N"}
-SECRET_CODES = {"T", "P", "A", "A", "I"}
-MEMENTO_TARGET_COUNT = len(SECRET_CODES)
-# PHOTO_CAPTION = "📸 Ocean of Possibilities: Learning Journey @ Applied AI"
-PHOTO_CAPTION = "📸 Ocean of Possibilities: Hong Kong University SPACE Study Tour @ Temasek Polytechnic Applied AI"
+SECRET_CODE = "TPAAI"
+MISSION_CODE_MAP = {
+    "tab1": "P",
+    "tab2": "A",
+    "tab3": "I",
+    "tab4": "A",
+    "tab5": "T"
+}
 
-if "found_codes_set" not in st.session_state:
-    st.session_state.found_codes_set = set()
+MEMENTO_TARGET_COUNT = len(SECRET_CODE)
+PHOTO_CAPTION = "📸 Ocean of Possibilities: Learning Journey @ TP Applied AI"
 
 # --- Square Image Configuration ---
 # Output size: 7.5 inches at 300 DPI = 2250x2250 pixels
@@ -133,10 +138,8 @@ st.title("🌊 Ocean Odyssey Vault")
 st.write("Complete missions, gather 5 code letters, and unlock the vault! 🔓")
 
 # --- 3. Vault Status ---
-current_count = len(st.session_state.found_codes_set)
-
-current_count = len(st.session_state.found_codes_set)
-is_unlocked = current_count == 5
+current_count = len(st.session_state.found_codest)
+is_unlocked = current_count == len(SECRET_CODE)
 
 # --- 4. Unified Vault Display ---
 v_col1, v_col2 = st.columns([1, 2])
@@ -145,12 +148,12 @@ with v_col1:
     st.metric(label="Vault Status", value=f"{current_count}/5")
 
 with v_col2:
-    # Logic: If all 5 are found, unscramble, otherwise show jumbled letters
+    # Logic: If all are found, unscramble, otherwise show jumbled letters
     if is_unlocked:
         codes_display = SECRET_CODE
     else:
-        found_sorted = sorted(list(st.session_state.found_codes_set))
-        codes_display = ", ".join(found_sorted) if found_sorted else "---"
+        # found_sorted = sorted(list(st.session_state.found_codest))
+        codes_display = ", ".join(st.session_state.found_codes) if st.session_state.found_codes else "---"
     
     st.metric(label="Codes Unlocked", value=codes_display)
 
@@ -173,16 +176,31 @@ if not is_unlocked:
             # This button now responds to the keyboard 'Enter' key!
             submit_button = st.form_submit_button("Unlock", width="stretch")
 
-        if st.button:
-            if user_input in SECRET_CODES:
-                if user_input not in st.session_state.found_codes_set:
-                    st.session_state.found_codes_set.add(user_input)
-                    # Check if this was the final character
-                    if len(st.session_state.found_codes_set) == 5:
+
+        if submit_button:
+            if user_input:
+                allowed_count = SECRET_CODE.count(user_input)
+                found_count = st.session_state.found_codes.count(user_input)
+        
+                if allowed_count == 0:
+                    st.error("Invalid code")
+                elif found_count < allowed_count:
+                    st.session_state.found_codes.append(user_input)
+        
+                    # Unlock only ONE matching mission that has not yet been unlocked
+                    for mission_key, code_char in MISSION_CODE_MAP.items():
+                        if code_char == user_input and mission_key not in st.session_state.unlocked_missions:
+                            st.session_state.unlocked_missions.add(mission_key)
+                            break
+        
+                    if len(st.session_state.found_codes) == len(SECRET_CODE):
                         st.balloons()
+        
                     st.rerun()
-            elif user_input:
-                st.error("Invalid code")
+                else:
+                    st.warning(f"You have already unlocked all '{user_input}' characters.")
+
+
 
 else:
     # st.write("---")
@@ -192,7 +210,7 @@ else:
 # 📸 SECTION C: FINAL PHOTO MEMENTO (LOCKED UNTIL 5/5)
 # ---------------------------------------------------------
 
-if len(st.session_state.found_codes_set) == MEMENTO_TARGET_COUNT:
+if len(st.session_state.found_codest) == MEMENTO_TARGET_COUNT:
     st.divider()
     st.header("🎉 Congratulations! Surprise unlocked!")
 
@@ -280,7 +298,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.youtube.com/shorts/rzNondvZCvE")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "N" in st.session_state.found_codes_set:
+            if "tab1" in st.session_state.found_codest:
                 st.info("1. AI cannot 'decide' on its own - humans must define labels first. \n" \
                         "2. AI learns specific patterns (e.g., fins, scales) of the object.")
             else:
@@ -294,7 +312,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.youtube.com/shorts/VTse_3Puxqs")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "C" in st.session_state.found_codes_set:
+            if "tab2" in st.session_state.found_codest:
                 st.info("1. The same word can have multiple meanings. \n" \
                         "2. AI predicts meaning from surrounding words.")
             else:
@@ -309,7 +327,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.linkedin.com/posts/marknewman4_signalprocessing-fouriertransform-voicerecognition-activity-7264904690893549568-Jg1Z")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "O" in st.session_state.found_codes_set:
+            if "tab3" in st.session_state.found_codest:
                 st.info("1. AI classifies sound by patterns that can be represented as an image.")
             else:
                 st.caption("🔒 Key takeaways locked. Enter the code to reveal.")
@@ -321,7 +339,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.youtube.com/shorts/k_R9JPQyUpw")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "E" in st.session_state.found_codes_set:
+            if "tab4" in st.session_state.found_codest:
                 st.info("1. AI reflects the data and labels humans give it. \n" \
                         "2. Bias often comes from missing, unbalanced, or subjective data. \n" \
                         "3. AI can appear confident even when it is wrong.")
@@ -333,7 +351,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("📝 Instructions", expanded=True):
             st.write("1. Complete the activity in https://sustainable-fish-expert.web.app")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "A" in st.session_state.found_codes_set:
+            if "tab5" in st.session_state.found_codest:
                 st.info("The chatbot answers questions by: \n" \
                         "1. searching trusted documents (facts about fish & sustainability) \n" \
                         "2. combining that information with language patterns.")
