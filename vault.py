@@ -138,7 +138,7 @@ st.title("🌊 Ocean Odyssey Vault")
 st.write("Complete missions, gather 5 code letters, and unlock the vault! 🔓")
 
 # --- 3. Vault Status ---
-current_count = len(st.session_state.found_codest)
+current_count = len(st.session_state.found_codes)
 is_unlocked = current_count == len(SECRET_CODE)
 
 # --- 4. Unified Vault Display ---
