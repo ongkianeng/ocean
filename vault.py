@@ -81,7 +81,7 @@ MISSION_CODE_MAP = {
 }
 
 MEMENTO_TARGET_COUNT = len(SECRET_CODE)
-PHOTO_CAPTION = "📸 Ocean of Possibilities: Learning Journey @ TP Applied AI"
+PHOTO_CAPTION = "📸 Ocean of Possibilities: Learning Journey @ Applied AI"
 
 # --- Square Image Configuration ---
 # Output size: 7.5 inches at 300 DPI = 2250x2250 pixels
@@ -298,7 +298,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.youtube.com/shorts/rzNondvZCvE")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "tab1" in st.session_state.found_codes:
+            if "tab1" in st.session_state.unlocked_missions:
                 st.info("1. AI cannot 'decide' on its own - humans must define labels first. \n" \
                         "2. AI learns specific patterns (e.g., fins, scales) of the object.")
             else:
@@ -312,7 +312,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.youtube.com/shorts/VTse_3Puxqs")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "tab2" in st.session_state.found_codes:
+            if "tab2" in st.session_state.unlocked_missions:
                 st.info("1. The same word can have multiple meanings. \n" \
                         "2. AI predicts meaning from surrounding words.")
             else:
@@ -327,7 +327,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.linkedin.com/posts/marknewman4_signalprocessing-fouriertransform-voicerecognition-activity-7264904690893549568-Jg1Z")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "tab3" in st.session_state.found_codes:
+            if "tab3" in st.session_state.unlocked_missions:
                 st.info("1. AI classifies sound by patterns that can be represented as an image.")
             else:
                 st.caption("🔒 Key takeaways locked. Enter the code to reveal.")
@@ -339,7 +339,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("🎥 Watch Video"):
             st.write("https://www.youtube.com/shorts/k_R9JPQyUpw")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "tab4" in st.session_state.found_codes:
+            if "tab4" in st.session_state.unlocked_missions:
                 st.info("1. AI reflects the data and labels humans give it. \n" \
                         "2. Bias often comes from missing, unbalanced, or subjective data. \n" \
                         "3. AI can appear confident even when it is wrong.")
@@ -351,7 +351,7 @@ with st.expander("📂 Your Missions", expanded=True):
         with st.expander("📝 Instructions", expanded=True):
             st.write("1. Complete the activity in https://sustainable-fish-expert.web.app")
         with st.expander("💡 Key Takeaways", expanded=True):
-            if "tab5" in st.session_state.found_codes:
+            if "tab5" in st.session_state.unlocked_missions:
                 st.info("The chatbot answers questions by: \n" \
                         "1. searching trusted documents (facts about fish & sustainability) \n" \
                         "2. combining that information with language patterns.")
